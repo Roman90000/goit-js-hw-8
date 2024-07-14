@@ -6,30 +6,29 @@ formEl.addEventListener('input', throttle(onInput, 500));
 formEl.addEventListener('submit', onFormSubmit);
 
 const LOCALSTORAGE_KEY = 'feedback-form-state';
-
-loadingPage();
-
-let dataForm = {};
+const { email, message } = formEl.elements;
 
 function onInput(e) {
-  dataForm[e.target.name] = e.target.value;
+  dataForm = { email: email.value, message: message.value };
   localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(dataForm));
 }
 
+loadingPage();
+
 function loadingPage() {
   const localData = localStorage.getItem(LOCALSTORAGE_KEY);
-  const parseData = JSON.parse(localData);
+  const parseData = JSON.parse(localData) || {};
 
   if (parseData) {
-    formEl[0].value = parseData.email || '';
-    formEl[1].value = parseData.message || '';
+    email.value = parseData.email || '';
+    message.value = parseData.message || '';
   }
 }
 
 function onFormSubmit(evt) {
   evt.preventDefault();
 
-  if (!formEl[0].value || !formEl[1].value) {
+  if (!email.value || !message.value) {
     return alert(`Будь ласка, заповніть всі обов'язкові поля.`);
   }
 
